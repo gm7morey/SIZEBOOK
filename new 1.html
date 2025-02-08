@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حساب حجم كعب الكتاب | Book Spine Calculator</title>
+  <style>
+    @font-face {
+      font-family: 'SF Pro Display';
+      src: url('https://cdn.apple.com/fonts/SF-Pro-Display-Regular.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'SF Arabic';
+      src: url('https://cdn.apple.com/fonts/SF-Arabic-Regular.woff2') format('woff2');
+    }
+    body {
+      font-family: 'SF Arabic', 'SF Pro Display', sans-serif;
+      text-align: center;
+      background: white;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .container {
+      max-width: 400px;
+      width: 90%;
+      padding: 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      transition: background 0.3s ease;
+    }
+    h2, label {
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 5px 0;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      border: none;
+      transition: background 0.3s ease;
+    }
+    p#result {
+      font-size: 22px;
+      font-weight: 700;
+      color: #FF001F;
+      margin-top: 15px;
+    }
+    .theme-toggle, .lang-toggle {
+      cursor: pointer;
+      font-weight: 600;
+      color: #0042B7;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="appContainer">
+    <div class="theme-toggle" onclick="toggleTheme()">تبديل الوضع الليلي</div>
+    <div class="lang-toggle" onclick="toggleLanguage()">English</div>
+    <h2 id="title">حساب حجم كعب الكتاب</h2>
+    <label id="paperWeightLabel">وزن الورق:</label>
+    <select id="paperWeight" onchange="changeTheme()">
+      <option value="70">70 جم</option>
+      <option value="80">80 جم</option>
+      <option value="100">100 جم</option>
+      <option value="130">130 جم</option>
+      <option value="150">150 جم</option>
+    </select>
+    <label id="pagesLabel">عدد الصفحات:</label>
+    <input type="number" id="pages" value="100">
+    <label id="coverTypeLabel">نوع الغلاف:</label>
+    <select id="coverType">
+      <option value="soft">ورقي</option>
+      <option value="hard">مقوى</option>
+    </select>
+    <label id="unitLabel">وحدة القياس:</label>
+    <select id="unit">
+      <option value="cm">سنتيمتر</option>
+      <option value="mm">ميليمتر</option>
+    </select>
+    <button onclick="calculateSpine()" id="calculateBtn">احسب</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function changeTheme() {
+      const colors = {
+        70: "#FF001F",
+        80: "#FF17A7",
+        100: "#0042B7",
+        130: "#FF871A",
+        150: "#2000B1"
+      };
+      const paperWeight = document.getElementById("paperWeight").value;
+      document.querySelectorAll("h2, label").forEach(el => el.style.color = colors[paperWeight]);
+      document.getElementById("calculateBtn").style.backgroundColor = colors[paperWeight];
+    }
+    function toggleTheme() {
+      document.body.classList.toggle("dark-mode");
+      document.body.style.background = document.body.classList.contains("dark-mode") ? "#222" : "white";
+      document.body.style.color = document.body.classList.contains("dark-mode") ? "white" : "black";
+      document.querySelector(".container").style.background = document.body.classList.contains("dark-mode") ? "#333" : "white";
+    }
+    function toggleLanguage() {
+      const elements = {
+        title: ["حساب حجم كعب الكتاب", "Book Spine Calculator"],
+        paperWeightLabel: ["وزن الورق:", "Paper Weight:"],
+        pagesLabel: ["عدد الصفحات:", "Number of Pages:"],
+        coverTypeLabel: ["نوع الغلاف:", "Cover Type:"],
+        unitLabel: ["وحدة القياس:", "Measurement Unit:"],
+        calculateBtn: ["احسب", "Calculate"],
+        themeToggle: ["تبديل الوضع الليلي", "Toggle Dark Mode"],
+        langToggle: ["English", "العربية"]
+      };
+      const isArabic = document.documentElement.lang === "ar";
+      document.documentElement.lang = isArabic ? "en" : "ar";
+      document.documentElement.dir = isArabic ? "ltr" : "rtl";
+      Object.keys(elements).forEach(id => {
+        document.getElementById(id).innerText = elements[id][isArabic ? 1 : 0];
+      });
+    }
+    function calculateSpine() {
+      const pages = parseInt(document.getElementById("pages").value) || 0;
+      const paperWeight = document.getElementById("paperWeight").value;
+      const unit = document.getElementById("unit").value;
+      const spineSizes = { 70: 0.4375, 80: 0.5, 100: 0.625, 130: 0.8125, 150: 0.9375 };
+      let spineSize = (pages / 100) * spineSizes[paperWeight];
+      let unitText = unit === "cm" ? " سم" : " مم";
+      spineSize = spineSize.toFixed(2) + unitText;
+      document.getElementById("result").innerHTML = `<span style='color:#0042B7; font-weight: bold;'>حجم الكعب:</span> <span style='color:#FF001F;'>${spineSize}</span>`;
+    }
+  </script>
+</body>
+</html>
